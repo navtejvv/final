@@ -156,21 +156,19 @@ def predict_emotion(request):
 
                     prediction = classifier.predict(roi)[0]
                     label = emotion_labels[prediction.argmax()]
-
-                    # Save emotion in session for summary
+                    print(f"Predicted emotion: {label}")  # Added debug
                     if 'captured_emotions' not in request.session:
                         request.session['captured_emotions'] = []
                     request.session['captured_emotions'].append(label)
-                    request.session.modified = True
-
+                    request.session.modified = True  # Ensure session saves
+                    print(f"Session emotions: {request.session['captured_emotions']}")  # Added debug
                     return JsonResponse({'emotion': label})
 
             return JsonResponse({'emotion': 'No face detected'})
         except Exception as e:
+            print(f"Error in predict_emotion: {e}")  # Enhanced error logging
             return JsonResponse({'error': str(e)}, status=500)
-    else:
-        return JsonResponse({'error': 'Invalid request method'}, status=405)
-
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 # CAPTURE EMOTION IMAGE
 def capture_emotion(request):
@@ -364,33 +362,41 @@ from collections import Counter
 from datetime import datetime
 from django.http import HttpResponse
 
-def some_view_function(request):
-    # Retrieve captured emotions from the session
-    captured_emotions = request.session.get('captured_emotions', [])
+import csv
+from collections import Counter
+from datetime import datetime
+from django.http import HttpResponse
 
-    print("Captured emotions:", captured_emotions)  # Debugging print
+
+def some_view_function(request):
+    captured_emotions = request.session.get('captured_emotions', [])
+    print("Captured emotions:", captured_emotions)
 
     if captured_emotions:
         emotion_counts = Counter(captured_emotions)
-        average_emotion = emotion_counts.most_common(1)[0][0]  # Most common emotion
+        average_emotion = emotion_counts.most_common(1)[0][0]
     else:
         average_emotion = "No emotions detected"
+        print("No emotions to write to CSV")
 
-    print("Average emotion:", average_emotion)  # Debugging print
+    # Set CSV file path to a subdirectory in the project
+    csv_file_path = os.path.join(os.path.dirname(__file__), "emotions", "final_emotions.csv")
+    os.makedirs(os.path.dirname(csv_file_path), exist_ok=True)  # Create 'emotions' folder if it doesn’t exist
+    print(f"Attempting to write to: {csv_file_path}")
 
-    # Define the CSV file path
-    csv_file_path = "D:/final_emotions.csv"
-
-    # Write emotion to CSV
     try:
+        file_exists = os.path.isfile(csv_file_path)
         with open(csv_file_path, mode='a', newline='') as file:
             writer = csv.writer(file)
+            if not file_exists:
+                writer.writerow(["Timestamp", "Emotion"])  # Add headers if file is new
             writer.writerow([datetime.now().strftime("%Y-%m-%d %H:%M:%S"), average_emotion])
-
-        print(f"Emotion '{average_emotion}' written to {csv_file_path}")  # Debugging print
+        print(f"Successfully wrote '{average_emotion}' to {csv_file_path}")
+    except PermissionError:
+        print(f"Permission denied to write to {csv_file_path}")
+        return HttpResponse("Permission denied when writing to CSV.", status=500)
     except Exception as e:
         print(f"Error writing to CSV: {e}")
+        return HttpResponse(f"Error writing to CSV: {e}", status=500)
 
     return HttpResponse(f"Emotion '{average_emotion}' saved successfully.")
-
-
