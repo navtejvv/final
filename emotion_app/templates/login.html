@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - AI Trial Room</title>
+    {% load static %}
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Decorative Layers */
+        .design {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.2;
+            animation: float 8s infinite ease-in-out;
+        }
+
+        .design.one {
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(255, 87, 34, 0.8), transparent);
+            top: 10%;
+            left: 20%;
+        }
+
+        .design.two {
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(76, 175, 80, 0.8), transparent);
+            bottom: 15%;
+            right: 10%;
+        }
+
+        .design.three {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(3, 169, 244, 0.8), transparent);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-30px);
+            }
+        }
+
+        /* Header */
+        .header {
+            position: absolute;
+            top: 40px;
+            text-align: center;
+            width: 100%;
+            font-size: 40px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #ff5722, #4caf50, #03a9f4);
+            background-clip: text; /* Add standard property */
+            -webkit-background-clip: text; /* For WebKit browsers */
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Login Container */
+        .login-container {
+            background: rgba(0, 0, 0, 0.7); /* Black background with opacity */
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .login-container h2 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #ff9800, #ffc107);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-container p {
+            margin-bottom: 25px;
+            color: #ddd;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 16px;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            outline: none;
+            background: rgba(255, 255, 255, 0.2); /* Slightly lighter for visibility */
+            color: #fff;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-group input:focus {
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid #ff5722;
+        }
+
+        button {
+            width: 100%;
+            background: linear-gradient(90deg, #ff5722, #ff9800);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #f44336, #e91e63);
+        }
+
+        /* Error Message Styling */
+        .error {
+            color: #ff7961;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Decorative Elements -->
+    <div class="design one"></div>
+    <div class="design two"></div>
+    <div class="design three"></div>
+
+    <!-- Header -->
+    <div class="header">AI TRIAL ROOM</div>
+
+    <!-- Login Form -->
+    <div class="login-container">
+        <h2>Login</h2>
+        <p>Access your personalized AI Trial Room experience.</p>
+        
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+        
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+</body>
+</html>

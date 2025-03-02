@@ -1,0 +1,136 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Emotion Detection</title>
+        <style>
+            /* General Reset */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: 'Arial', sans-serif;
+                background-color: #000; /* Black background */
+                color: #fff;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                position: relative;
+                overflow: hidden;
+            }
+
+            /* Header */
+            h1 {
+                font-size: 3rem;
+                color: #ff5722; /* Vibrant orange for the header */
+                margin-bottom: 20px;
+                animation: fadeIn 2s ease-in-out;
+            }
+
+            /* Button */
+            button {
+                font-size: 1.5rem;
+                color: #fff;
+                background-color: #ff5722; /* Orange button */
+                border: none;
+                padding: 15px 30px;
+                border-radius: 10px;
+                cursor: pointer;
+                box-shadow: 0 5px 15px rgba(255, 87, 34, 0.5);
+                transition: transform 0.2s, background-color 0.3s ease;
+            }
+
+            button:hover {
+                background-color: #e64a19; /* Darker orange on hover */
+                transform: scale(1.05);
+            }
+
+            button:active {
+                transform: scale(0.95);
+            }
+
+            /* Floating Decorations */
+            .design {
+                position: absolute;
+                border-radius: 50%;
+                opacity: 0.1;
+                animation: float 10s infinite ease-in-out;
+            }
+
+            .design.one {
+                width: 400px;
+                height: 400px;
+                background: radial-gradient(circle, #ff5722, transparent);
+                top: 10%;
+                left: 20%;
+            }
+
+            .design.two {
+                width: 300px;
+                height: 300px;
+                background: radial-gradient(circle, #4caf50, transparent);
+                bottom: 15%;
+                right: 25%;
+            }
+
+            .design.three {
+                width: 350px;
+                height: 350px;
+                background: radial-gradient(circle, #03a9f4, transparent);
+                top: 50%;
+                left: 60%;
+            }
+
+            @keyframes float {
+                0%, 100% {
+                    transform: translateY(0);
+                }
+                50% {
+                    transform: translateY(-20px);
+                }
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Decorative Elements -->
+        <div class="design one"></div>
+        <div class="design two"></div>
+        <div class="design three"></div>
+
+        <!-- Page Header -->
+        <h1>Emotion Detection</h1>
+        
+        <!-- Start Detection Button -->
+        <button id="startDetection">Start Detection</button>
+
+        <!-- JavaScript for Redirection -->
+        <script>
+            document.getElementById('startDetection').addEventListener('click', function() {
+                // Display an alert
+                alert("Detection Started!");
+
+                // Redirect to the webcam capture page immediately
+                window.location.href = "/emotion_app/webcam_capture/";
+            });
+        </script>
+    </body>
+    </html>
+
+
+

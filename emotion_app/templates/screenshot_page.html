@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screenshot Page</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #111;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #ff5722;
+            margin-top: 20px;
+        }
+
+        .emotion-summary {  
+            margin: 20px 0;
+            font-size: 1.5rem;
+            color: #4caf50;
+        }
+
+        .emoji {
+            font-size: 2rem;
+        }
+
+        .last-captured-image {
+            margin: 30px 0;
+        }
+
+        .last-captured-image img {
+            max-width: 80%;
+            border: 3px solid #4caf50;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .button {
+            background-color: #00bcd4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin: 10px;
+        }
+
+        .button:hover {
+            background-color: #0288d1;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .button-container form {
+            margin: 0 10px; /* Add space between the buttons */
+        }
+    </style>
+</head>
+<body>
+    <h1>Emotion Detection Summary</h1>
+    <p class="emotion-summary">
+        Average emotion: 
+        <span class="emoji">{{ emoji }}</span> 
+        ({{ average_emotion }})
+    </p>
+
+    <div class="last-captured-image">
+        {% if last_captured_image %}
+            <img src="{{ last_captured_image }}" alt="Last captured emotion image">
+        {% endif %}
+    </div>
+
+    <div class="button-container">
+        <form action="{% url 'show_image_page' %}" method="get">
+            <button type="submit" class="button">View Last Image</button>
+        </form>
+        <form action="{% url 'restart_emotion_detection' %}" method="get">
+            <button type="submit" class="button">Restart Detection</button>
+        </form>
+        <!-- New Button to Go to Running Emotions Page -->
+        <form action="{% url 'running_emotions' %}" method="get">
+            <button type="submit" class="button">View Running Emotion Quotes</button>
+        </form>
+    </div>
+
+    <footer>
+        © 2025 Emotion Detection App
+    </footer>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Running Emotion Quote</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #111;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            position: relative;
+            width: 90%;
+            max-width: 1200px;
+            height: 90%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #222;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Emotion quote at the top */
+        .quote-container {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 80%;
+            text-align: center;
+            margin-bottom: 20px; /* Space between quote and image */
+            animation: scroll 10s linear infinite;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Last image */
+        .image-container {
+            width: 100%;
+            height: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 10px;
+            font-size: 0.9rem;
+            color: #888;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Emotion Quote at the top -->
+        {% if latest_emotion %}
+            <div class="quote-container">
+                <p>{{ latest_emotion }}: "{{ quote }}"</p>
+            </div>
+        {% else %}
+            <div class="quote-container">
+                <p>No emotion detected yet.</p>
+            </div>
+        {% endif %}
+
+        <!-- Last Image -->
+        <div class="image-container">
+            {% if last_image_url %}
+                <img src="{{ last_image_url }}" alt="Last Captured Emotion Image">
+            {% else %}
+                <p>No image found.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <footer>
+        © 2025 Emotion Detection App
+    </footer>
+
+</body>
+</html>

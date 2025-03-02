@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Emotion Detection</title>
+    {% load static %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #111;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: #ff5722; 
+            margin: 20px 0;
+        }
+
+        #webcam {
+            border: 5px solid #ff5722;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+            margin-bottom: 20px;
+        }
+
+        #emotion_label {
+            font-size: 1.5rem;
+            margin-top: 20px;
+            color: #4caf50;
+        }
+
+        #emoji {
+            font-size: 3rem;
+            margin: 10px 0;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #emoji:hover {
+            transform: scale(1.2);
+        }
+
+        .status-message {
+            font-size: 1.2rem;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #333;
+            border-radius: 5px;
+            width: 70%;
+            margin: 20px auto;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        #emotionForm {
+            display: none; /* Hide the form as it is not needed for this design */
+        }
+
+        #start-trial-btn {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease;
+            display: none; /* Initially hide the button */
+        }
+
+        #start-trial-btn:hover {
+            background-color: #45a049;
+        }
+
+        @media (max-width: 768px) {
+            #webcam {
+                width: 90%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h2>Live Webcam Emotion Detection</h2>
+
+        <!-- Start Trial Button -->
+        <form action="{% url 'screenshot_page' %}" method="get">
+            <button id="start-trial-btn" type="submit">Start Trial</button>
+        </form>
+
+        <!-- Webcam feed -->
+        <video id="webcam" width="640" height="480" autoplay></video>
+        
+        <!-- Emotion label -->
+        <p id="emotion_label">Emotion: None</p>
+        
+        <!-- Emoji display -->
+        <div id="emoji">😐</div>
+
+        <!-- CSRF form (hidden, just for CSRF token) -->
+        <form id="emotionForm">
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+        </form>
+
+        <!-- Image save status message -->
+        <div id="image_save_status" class="status-message"></div>
+    </div>
+
+    <script>
+        let emotionLabel = document.getElementById("emotion_label");
+        let emojiDisplay = document.getElementById("emoji");
+        let video = document.getElementById("webcam");
+        let imageSaveStatus = document.getElementById("image_save_status");
+        let startTrialButton = document.getElementById("start-trial-btn");
+
+        // Access the webcam
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => { video.srcObject = stream; })
+            .catch(err => { console.log("Error accessing webcam:", err); });
+
+        // Show the Start Trial button after 10 seconds
+        setTimeout(() => {
+            startTrialButton.style.display = "inline-block";
+        }, 10000);
+
+        // Map emotions to emojis
+        const emotionToEmoji = {
+            "Happy": "😊",
+            "Sad": "😢",
+            "Angry": "😡",
+            "Surprised": "😲",
+            "Neutral": "😐",
+            "Fear": "😨",
+            "Disgust": "🤢"
+        };
+
+        function captureAndSend() {
+            let canvas = document.createElement("canvas");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext("2d").drawImage(video, 0, 0);
+
+            let image_data = canvas.toDataURL("image/png");
+
+            // Send image data to Django backend
+            $.ajax({
+                url: '/emotion_app/capture_and_save_image/',
+                method: 'POST',
+                data: {
+                    'image_data': image_data,
+                    'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                },
+                success: function (response) {
+                    if (response.error) {
+                        imageSaveStatus.innerHTML = "Error saving image: " + response.error;
+                    } else {
+                        imageSaveStatus.innerHTML = "Image saved successfully! Path: " + response.file_path;
+                    }
+                },
+                error: function (err) {
+                    console.log("Error:", err);
+                }
+            });
+        }
+
+        // Capture and send image every 5 seconds
+        setInterval(captureAndSend, 5000);
+
+        function detectEmotion() {
+            let canvas = document.createElement("canvas");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext("2d").drawImage(video, 0, 0);
+
+            let image_data = canvas.toDataURL("image/png");
+
+            // Send image data to backend for emotion prediction
+            $.ajax({
+                url: '/emotion_app/predict_emotion/',
+                method: 'POST',
+                data: {
+                    'image_data': image_data,
+                    'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                },
+                success: function (response) {
+                    const detectedEmotion = response.emotion;
+                    emotionLabel.innerHTML = "Emotion: " + detectedEmotion;
+
+                    // Update emoji based on detected emotion
+                    emojiDisplay.innerHTML = emotionToEmoji[detectedEmotion] || "😐";
+                },
+                error: function (err) {
+                    console.log("Error:", err);
+                }
+            });
+        }
+
+        // Detect emotion every second
+        setInterval(detectEmotion, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Capture</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #111;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #ff5722;
+            margin-top: 20px;
+        }
+
+        #webcam-container {
+            margin: 20px auto;
+            border: 3px solid #4caf50;
+            border-radius: 10px;
+            width: fit-content;
+            padding: 10px;
+            background-color: #222;
+        }
+
+        button {
+            background-color: #00bcd4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0288d1;
+        }
+    </style>
+</head>
+<body>
+    <h1>Webcam Capture</h1>
+    
+    <!-- Webcam feed -->
+    <div id="webcam-container">
+        <video id="webcam" width="640" height="480" autoplay></video>
+    </div>
+
+    <!-- Buttons -->
+    <div>
+        <!-- Display Screenshot Page Button -->
+        <form action="{% url 'screenshot_page' %}" method="get" style="display: inline;">
+            <button type="submit">Go to Screenshot Page</button>
+        </form>
+
+        <!-- Stop Webcam Button -->
+        <button id="stop-webcam">Stop Webcam</button>
+    </div>
+
+    <script>
+        // JavaScript to handle webcam stream
+        const webcam = document.getElementById("webcam");
+        const stopWebcamButton = document.getElementById("stop-webcam");
+        let stream = null;
+
+        // Start webcam on page load
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(mediaStream) {
+                stream = mediaStream;
+                webcam.srcObject = mediaStream;
+            })
+            .catch(function(error) {
+                console.error("Error accessing webcam:", error);
+            });
+
+        // Stop webcam stream
+        stopWebcamButton.addEventListener("click", () => {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                webcam.srcObject = null;
+                console.log("Webcam stopped.");
+            }
+        });
+    </script>
+</body>
+</html>
